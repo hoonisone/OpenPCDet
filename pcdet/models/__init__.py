@@ -14,6 +14,15 @@ except:
 
 
 def build_network(model_cfg, num_class, dataset):
+    """
+    Args:
+        model_cfg: yaml파일의 MODEL속성에 해당, 모델의 구조 등에 대한 정보를 담고있음
+        num_class: 탐지할 대상 class 개수
+        dataset:
+
+    Returns:
+
+    """
     model = build_detector(
         model_cfg=model_cfg, num_class=num_class, dataset=dataset
     )

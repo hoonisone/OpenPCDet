@@ -1,4 +1,7 @@
 import logging
+# 파이썬 자체에서 제공하는 로깅 라이브러리로 로그별 유형과 수준에 대해 다양하게 관리 가능
+# 로깅을 할거라면 이녀석을 이용하는게 굉장히 편리하겠다~
+
 import os
 import pickle
 import random
@@ -83,21 +86,62 @@ def get_voxel_centers(voxel_coords, downsample_times, voxel_size, point_cloud_ra
 
 
 def create_logger(log_file=None, rank=0, log_level=logging.INFO):
+    """
+
+    Args:
+        log_file: log file 경로
+        rank:
+        log_level:
+
+    Returns:
+
+    """
     logger = logging.getLogger(__name__)
+    # logger 생성
+    # 이때 이름을 가지고 식별 (동일한 이름 입력 시 동일한 logger 인스턴스 반환)
+
     logger.setLevel(log_level if rank == 0 else 'ERROR')
+    # logger의 level을 설정
+    # logger가 기록하는 log는 다양한 유형이 있고 각자 level을 갖는다.
+    # logger에 설정된 level보다 낮은 수준의 log는 무시된다.
+
+    # 숫자가 높을 수록 높은 수준의 log이다.
+    """
+    CRITICAL  50
+    ERROR     40
+    WARNING   30
+    INFO      20
+    DEBUG     10
+    NOTSET     0
+    """
+
     formatter = logging.Formatter('%(asctime)s  %(levelname)5s  %(message)s')
+    # log에 정해진 인자가 따로 있고 그걸 출력하는 포맷은 사용자 지정이 되는 듯 하다.
+
+
+
     console = logging.StreamHandler()
     console.setLevel(log_level if rank == 0 else 'ERROR')
     console.setFormatter(formatter)
+    # 로그를 출력할 stream을 하나 생성하고 logger와 별개로 level을 지정하고 format지정
+
+
     logger.addHandler(console)
+    # 단일 logger에 여러 StreamHandler를 등록할 수 있는 듯 하다.
+    # 등록하면 log가 출력될 때 등록된 모든 handler로 출력해주는 듯
+
     if log_file is not None:
         file_handler = logging.FileHandler(filename=log_file)
         file_handler.setLevel(log_level if rank == 0 else 'ERROR')
         file_handler.setFormatter(formatter)
         logger.addHandler(file_handler)
-    logger.propagate = False
-    return logger
+        # 파일 경로가 주어지면 동일한 방법으로 파일 stream handler를 만들어 등록
+        # 파일에도 log가 따로 기록된다.
 
+    logger.propagate = False
+    # logger.propagate: 처리 못한 log를 부모 logger에게 넘길것인가?
+
+    return logger
 
 def set_random_seed(seed):
     random.seed(seed)
